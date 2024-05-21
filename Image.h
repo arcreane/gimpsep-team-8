@@ -1,29 +1,39 @@
-#pragma once
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include <opencv2/opencv.hpp>
 #include <iostream>
-#include <vector>
 
 class Image {
 private:
-    std::vector<std::vector<int>> pixelIntensities; // Matrice d'intensités de pixels
+    cv::Mat imageMat;
 
 public:
-    // Constructeur par défaut
-    Image();
+    int loadImage(const char* imagePath) {
+        imageMat = cv::imread(imagePath);
+        if (imageMat.empty()) {
+            std::cerr << "Erreur : Impossible de charger l'image." << std::endl;
+            return -1;
+        }
+        return 0;
+    }
 
-    // Méthode pour charger une image
-    void loadImage(const std::vector<std::vector<int>>& pixels);
+    void saveImage(const std::string& newImagePath) {
+        cv::imwrite(newImagePath, imageMat);
+    }
 
-    // Méthode pour sauvegarder une image
-    void saveImage();
+    void displayImage(const std::string& windowName = "Image") const {
+        cv::imshow(windowName, imageMat);
+        cv::waitKey(0);
+    }
+    
+    cv::Mat& getImageMat() {
+        return imageMat;
+    }
 
-    // Méthode pour afficher l'image
-    void displayImage() const;
-
-    // Méthode pour appliquer une transformation sur l'image (à implémenter)
-    void applyTransformation(/* Paramètres de la transformation */);
+    const cv::Mat& getImageMat() const {
+        return imageMat;
+    }
 };
 
 #endif // IMAGE_H
